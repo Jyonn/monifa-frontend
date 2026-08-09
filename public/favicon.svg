@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#173f3a"/>
-  <path d="M13 45V19h8l11 15 11-15h8v26h-8V31L32 45 21 31v14z" fill="#e6ff59"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Monifa</title>
+  <rect width="512" height="512" rx="96" fill="#173F3A"/>
+  <path fill="#E6FF59" d="M104 368V144h70l82 104 82-104h70v224h-68V244l-84 104-84-104v124z"/>
+  <path fill="#E9664C" d="M256 72a184 184 0 0 1 132 56l-48 48a116 116 0 0 0-84-36z"/>
 </svg>
-
