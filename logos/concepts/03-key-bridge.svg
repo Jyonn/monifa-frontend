@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Monifa Key Bridge</title>
+  <desc id="desc">Two secure channels join to create the letter M.</desc>
+  <g id="background">
+    <rect width="512" height="512" rx="96" fill="#173F3A"/>
+  </g>
+  <g id="bridge" fill="none" stroke="#E6FF59" stroke-width="68" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M112 360V152l144 144 144-144v208"/>
+  </g>
+  <g id="keys" fill="#E9664C">
+    <circle cx="112" cy="152" r="34"/>
+    <circle cx="400" cy="152" r="34"/>
+  </g>
+</svg>

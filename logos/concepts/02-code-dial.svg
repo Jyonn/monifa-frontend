@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Monifa Code Dial</title>
+  <desc id="desc">A rotating authentication dial with an M-shaped center.</desc>
+  <g id="background">
+    <rect width="512" height="512" rx="96" fill="#F4F7F3"/>
+  </g>
+  <g id="dial">
+    <circle cx="256" cy="256" r="160" fill="#173F3A"/>
+    <path fill="#E9664C" d="M256 56a200 200 0 0 1 173 100l-59 34a132 132 0 0 0-114-66z"/>
+    <circle cx="256" cy="256" r="114" fill="#E6FF59"/>
+  </g>
+  <g id="monogram" fill="#173F3A">
+    <path d="M172 326V186h48l36 47 36-47h48v140h-48v-72l-36 46-36-46v72z"/>
+  </g>
+</svg>
