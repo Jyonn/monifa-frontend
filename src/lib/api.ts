@@ -1,7 +1,7 @@
 import type { EntryDraft } from "./parse";
 import type { MfaEntry, User } from "../types";
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api").replace(/\/$/, "");
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
 const REFRESH_KEY = "monifa:refresh-token";
 let accessToken = "";
 
