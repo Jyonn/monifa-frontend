@@ -1,4 +1,4 @@
-import { Check, Copy, Trash2 } from "lucide-react";
+import { Check, Copy, Share2, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { generateCode, secondsRemaining } from "../lib/totp";
 import type { MfaEntry } from "../types";
@@ -7,7 +7,7 @@ function initials(issuer: string) {
   return issuer.trim().slice(0, 2).toUpperCase();
 }
 
-export function TokenRow({ entry, clockOffset, onDelete }: { entry: MfaEntry; clockOffset: number; onDelete: () => void }) {
+export function TokenRow({ entry, clockOffset, onDelete, onShare }: { entry: MfaEntry; clockOffset: number; onDelete: () => void; onShare: () => void }) {
   const [now, setNow] = useState(Date.now());
   const [copied, setCopied] = useState(false);
   useEffect(() => {
@@ -40,10 +40,12 @@ export function TokenRow({ entry, clockOffset, onDelete }: { entry: MfaEntry; cl
       <div className="timer" style={{ "--progress": progress } as React.CSSProperties} aria-label={`剩余 ${remaining} 秒`}>
         <span>{remaining}</span>
       </div>
+      <button className={`icon-button ${entry.shareActive ? "shared" : ""}`} onClick={onShare} aria-label={`分享 ${entry.issuer}`} title="分享">
+        <Share2 size={18} />
+      </button>
       <button className="icon-button danger" onClick={onDelete} aria-label={`删除 ${entry.issuer}`} title="删除">
         <Trash2 size={19} />
       </button>
     </article>
   );
 }
-

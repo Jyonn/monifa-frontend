@@ -2,6 +2,8 @@ import { CloudOff, Github, KeyRound, LogOut, Plus, Settings, ShieldCheck, Unlink
 import { useCallback, useEffect, useState } from "react";
 import { AddEntry } from "./components/AddEntry";
 import { Brand } from "./components/Brand";
+import { ShareDialog } from "./components/ShareDialog";
+import { SharedOtpPage } from "./components/SharedOtpPage";
 import { TokenRow } from "./components/TokenRow";
 import * as api from "./lib/api";
 import type { EntryDraft } from "./lib/parse";
@@ -16,6 +18,7 @@ function currentView(): View {
 }
 
 export function App() {
+  const shareToken = window.location.hash.match(/^#\/share\/([^?]+)/)?.[1] || "";
   const [user, setUser] = useState<User | null>(null);
   const [entries, setEntries] = useState<MfaEntry[]>([]);
   const [view, setView] = useState<View>(currentView());
@@ -24,6 +27,7 @@ export function App() {
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [booting, setBooting] = useState(true);
   const [toast, setToast] = useState("");
+  const [sharing, setSharing] = useState<MfaEntry | null>(null);
 
   const navigate = useCallback((next: View) => {
     window.location.hash = `#/${next}`;
@@ -56,6 +60,7 @@ export function App() {
 
   useEffect(() => {
     async function boot() {
+      if (shareToken) { setBooting(false); return; }
       if (import.meta.env.DEV && window.location.hash.startsWith("#/preview")) {
         setUser({ id: "preview", displayName: "Jyonn Preview", avatarUrl: "", identities: [{ provider: "github", username: "jyonn", email: "" }] });
         setEntries([
@@ -90,7 +95,7 @@ export function App() {
       setBooting(false);
     }
     boot();
-  }, [sync]);
+  }, [shareToken, sync]);
 
   useEffect(() => {
     if (!user || !online) return;
@@ -137,6 +142,8 @@ export function App() {
 
   if (booting) return <main className="splash"><Brand /><span>正在校准时间</span></main>;
 
+  if (shareToken) return <SharedOtpPage token={shareToken} />;
+
   if (!user) return <main className="login-page">
     <section className="login-copy"><Brand /><h1>你的验证码，<br />在每一秒准时抵达。</h1><p>使用已有身份登录 Monifa，在浏览器中生成标准 TOTP 验证码。</p></section>
     <section className="login-actions" aria-label="登录方式">
@@ -160,7 +167,7 @@ export function App() {
     <main className="workspace">
       {view === "tokens" && <>
         <header className="workspace-header"><div><span className="eyebrow">AUTHENTICATOR</span><h1>验证码</h1></div><div className={`sync-state ${online ? "" : "offline"}`}>{online ? <Wifi size={16} /> : <CloudOff size={16} />}<span>{online ? lastSync ? `更新于 ${lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "在线" : "离线数据"}</span></div></header>
-        {entries.length ? <section className="token-list">{entries.map((entry) => <TokenRow key={entry.id} entry={entry} clockOffset={clockOffset} onDelete={() => remove(entry)} />)}</section> : <section className="empty-state"><div className="empty-dial"><KeyRound /></div><h2>还没有验证码</h2><button className="primary-button" onClick={() => navigate("add")}><Plus size={19} />新增第一个</button></section>}
+        {entries.length ? <section className="token-list">{entries.map((entry) => <TokenRow key={entry.id} entry={entry} clockOffset={clockOffset} onDelete={() => remove(entry)} onShare={() => setSharing(entry)} />)}</section> : <section className="empty-state"><div className="empty-dial"><KeyRound /></div><h2>还没有验证码</h2><button className="primary-button" onClick={() => navigate("add")}><Plus size={19} />新增第一个</button></section>}
         <button className="floating-add" onClick={() => navigate("add")} aria-label="新增验证码" title="新增验证码"><Plus /></button>
       </>}
       {view === "add" && <AddEntry onSave={add} onClose={() => navigate("tokens")} />}
@@ -173,5 +180,9 @@ export function App() {
       </section>}
     </main>
     {toast && <button className="toast" onClick={() => setToast("")}>{toast}</button>}
+    {sharing && <ShareDialog entry={sharing} onClose={() => setSharing(null)} onChange={(active) => {
+      setEntries((items) => items.map((item) => item.id === sharing.id ? { ...item, shareActive: active } : item));
+      setSharing({ ...sharing, shareActive: active });
+    }} />}
   </div>;
 }

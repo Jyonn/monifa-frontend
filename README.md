@@ -19,5 +19,6 @@ The frontend expects the Django API at `VITE_API_BASE_URL`. Production builds us
 - Logout clears the current account's local cache.
 - API responses containing secrets use `Cache-Control: no-store`.
 - The app loads no third-party scripts, fonts, issuer icons or analytics.
+- Shared OTP URLs are bearer links: anyone with the URL can read the current code until it expires or is revoked. The URL does not contain the TOTP secret, and creating a replacement invalidates the previous link.
 
 This model prioritizes a frictionless offline Web App. XSS or access to the browser profile can expose MFA secrets, so CSP and dependency review are part of the security boundary.

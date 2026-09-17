@@ -1,5 +1,5 @@
 import type { EntryDraft } from "./parse";
-import type { MfaEntry, User } from "../types";
+import type { MfaEntry, SharedOtp, User } from "../types";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
 const REFRESH_KEY = "monifa:refresh-token";
@@ -69,6 +69,27 @@ export async function createEntry(draft: EntryDraft): Promise<MfaEntry> {
 
 export async function deleteEntry(id: number) {
   return request(`/mfa/entries/${id}`, { method: "DELETE" });
+}
+
+export async function createShare(id: number, ttlSeconds: number | null) {
+  return request<{ token: string; expiresAt: string | null }>(`/mfa/entries/${id}/share`, {
+    method: "POST",
+    body: JSON.stringify({ ttlSeconds })
+  });
+}
+
+export async function revokeShare(id: number) {
+  return request(`/mfa/entries/${id}/share`, { method: "DELETE" });
+}
+
+export async function getSharedOtp(token: string): Promise<SharedOtp> {
+  const response = await fetch(`${API_BASE}/shares/${encodeURIComponent(token)}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+    referrerPolicy: "no-referrer"
+  });
+  if (!response.ok) throw new Error(response.status === 404 ? "share_not_found" : `请求失败 (${response.status})`);
+  return response.json();
 }
 
 export async function unlinkIdentity(provider: string) {
