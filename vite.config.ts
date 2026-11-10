@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "icons/logo-192.png", "icons/logo-512.png"],
       manifest: {
-        name: "Monifa",
-        short_name: "Monifa",
+        name: "Monifa · 时符",
+        short_name: "时符",
         description: "A multi-SSO TOTP authenticator",
         theme_color: "#173f3a",
         background_color: "#f4f7f3",

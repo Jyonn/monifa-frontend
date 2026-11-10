@@ -1,5 +1,5 @@
 import type { EntryDraft } from "./parse";
-import type { MfaEntry, SharedOtp, User } from "../types";
+import type { Identity, MfaEntry, SharedOtp, User } from "../types";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
 const REFRESH_KEY = "monifa:refresh-token";
@@ -55,7 +55,7 @@ export async function logout() {
   clearSession();
 }
 
-export function authStartUrl(provider: "qitian" | "github") {
+export function authStartUrl(provider: Identity["provider"]) {
   return `${API_BASE}/auth/${provider}/start`;
 }
 
@@ -92,12 +92,15 @@ export async function getSharedOtp(token: string): Promise<SharedOtp> {
   return response.json();
 }
 
-export async function unlinkIdentity(provider: string) {
+export async function unlinkIdentity(provider: Identity["provider"]) {
   return request(`/me/identities/${provider}`, { method: "DELETE" });
 }
 
-export async function startIdentityLink(provider: "qitian" | "github") {
-  const result = await request<{ authorizeUrl: string }>(`/auth/${provider}/link`);
+export async function startIdentityLink(provider: Identity["provider"]) {
+  const result = await request<{ authorizeUrl: string }>(`/auth/${provider}/link`, {
+    credentials: provider === "frienden" ? "include" : "omit",
+    cache: "no-store"
+  });
   window.location.href = result.authorizeUrl;
 }
 

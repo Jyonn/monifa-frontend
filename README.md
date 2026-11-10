@@ -1,6 +1,6 @@
-# Monifa Frontend
+# Monifa · 时符 Frontend
 
-React, TypeScript and Vite frontend for the Monifa multi-SSO TOTP authenticator.
+React, TypeScript and Vite frontend for Monifa · 时符, a TOTP authenticator that supports multiple SSO providers.
 
 ## Development
 
