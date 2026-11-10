@@ -16,6 +16,11 @@ const identityLabels: Record<Identity["provider"], string> = {
   github: "GitHub",
   frienden: "友间"
 };
+const oauthErrors = new Map([
+  ["identity_in_use", "该登录身份或手机号已绑定，请检查现有账号的绑定设置"],
+  ["frienden_phone_unverified", "请先在友间验证手机号，再重新授权"],
+  ["frienden_phone_changed", "友间手机号已变更。请用原登录方式进入设置，同步友间手机号"]
+]);
 
 function currentView(): View {
   const value = window.location.hash.split("?")[0].replace("#/", "");
@@ -87,7 +92,7 @@ export function App() {
         setView(friendenLink ? "settings" : "tokens");
       }
       if (error) {
-        setToast(error === "identity_in_use" ? "该登录身份已被绑定，请检查现有账号的绑定设置" : "授权未完成，请重试");
+        setToast(oauthErrors.get(error) ?? "授权未完成，请重试");
       }
       if (ticket) {
         try {
@@ -218,7 +223,7 @@ export function App() {
           <div className="binding-actions">
             {!user.identities.some((item) => item.provider === "qitian") && <button onClick={() => linkIdentity("qitian")}><span className="qitian-symbol small">齐</span>绑定齐天簿</button>}
             {!user.identities.some((item) => item.provider === "github") && <button onClick={() => linkIdentity("github")}><Github size={18} />绑定 GitHub</button>}
-            {!user.identities.some((item) => item.provider === "frienden") && <button onClick={() => linkIdentity("frienden")}><UserRound size={18} />绑定友间</button>}
+            <button onClick={() => linkIdentity("frienden")}><UserRound size={18} />{user.identities.some((item) => item.provider === "frienden") ? "同步友间手机号" : "绑定友间"}</button>
           </div>
         </div>
         <button className="logout-button" onClick={signOut}><LogOut size={18} />退出并清除离线数据</button>
