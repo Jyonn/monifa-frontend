@@ -22,5 +22,6 @@ export type SharedOtp = {
   expiresAt: string | null;
 };
 
-export type Identity = { provider: "qitian" | "github" | "frienden"; username: string; email: string };
+export type LoginProvider = "qitian" | "frienden";
+export type Identity = { provider: LoginProvider | "github"; username: string; email: string };
 export type User = { id: string; displayName: string; avatarUrl: string; identities: Identity[] };

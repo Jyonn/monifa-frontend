@@ -8,12 +8,12 @@ import { TokenRow } from "./components/TokenRow";
 import * as api from "./lib/api";
 import type { EntryDraft } from "./lib/parse";
 import { cacheEntries, clearCache, loadCachedEntries, loadOfflineUser } from "./lib/storage";
-import type { Identity, MfaEntry, User } from "./types";
+import type { Identity, LoginProvider, MfaEntry, User } from "./types";
 
 type View = "tokens" | "add" | "settings";
 const identityLabels: Record<Identity["provider"], string> = {
   qitian: "齐天簿",
-  github: "GitHub",
+  github: "GitHub（已停用）",
   frienden: "友间"
 };
 const oauthErrors = new Map([
@@ -75,7 +75,7 @@ export function App() {
       if (bootStarted.current) return;
       bootStarted.current = true;
       if (import.meta.env.DEV && window.location.hash.startsWith("#/preview")) {
-        setUser({ id: "preview", displayName: "Jyonn Preview", avatarUrl: "", identities: [{ provider: "github", username: "jyonn", email: "" }] });
+        setUser({ id: "preview", displayName: "Jyonn Preview", avatarUrl: "", identities: [{ provider: "frienden", username: "jyonn", email: "" }] });
         setEntries([
           { id: 1, issuer: "GitHub", accountName: "jyonn@example.com", secret: "JBSWY3DPEHPK3PXP", algorithm: "SHA1", digits: 6, period: 30, createdAt: "" },
           { id: 2, issuer: "齐天簿", accountName: "jyonn", secret: "GEZDGNBVGY3TQOJQ", algorithm: "SHA1", digits: 6, period: 30, createdAt: "" }
@@ -162,7 +162,7 @@ export function App() {
     setEntries([]);
   }
 
-  async function linkIdentity(provider: Identity["provider"]) {
+  async function linkIdentity(provider: LoginProvider) {
     try {
       await api.startIdentityLink(provider);
     } catch {
@@ -180,10 +180,9 @@ export function App() {
     <section className="login-copy"><Brand /><h1>你的验证码，<br />在每一秒准时抵达。</h1><p>使用已有身份登录 Monifa · 时符，在浏览器中生成标准 TOTP 验证码。</p></section>
     <section className="login-actions" aria-label="登录方式">
       <span className="eyebrow">CHOOSE AN IDENTITY</span>
+      <button className="login-primary" onClick={() => { window.location.href = api.authStartUrl("frienden"); }}><UserRound size={22} /><span>使用友间登录</span></button>
       <button onClick={() => { window.location.href = api.authStartUrl("qitian"); }}><span className="qitian-symbol">齐</span><span>使用齐天簿登录</span></button>
-      <button onClick={() => { window.location.href = api.authStartUrl("github"); }}><Github size={22} /><span>使用 GitHub 登录</span></button>
-      <button onClick={() => { window.location.href = api.authStartUrl("frienden"); }}><UserRound size={22} /><span>使用友间登录</span></button>
-      <p>已有 Monifa · 时符账号？请先用原方式登录，再到设置中绑定友间。</p>
+      <p>已有齐天簿账号？请先用齐天簿登录，再到设置中绑定友间。</p>
       <p><ShieldCheck size={16} />Monifa · 时符不会保存第三方登录 Token</p>
     </section>
     {toastMessage}
@@ -215,14 +214,13 @@ export function App() {
               {identity.provider === "github" ? <Github size={20} /> : identity.provider === "frienden" ? <UserRound size={20} /> : "齐"}
             </span>
             <div><strong>{identityLabels[identity.provider]}</strong><span>{identity.username || identity.email}</span></div>
-            <button className="icon-button" disabled={user.identities.length === 1} onClick={() => api.unlinkIdentity(identity.provider).then(() => setUser({ ...user, identities: user.identities.filter((item) => item.provider !== identity.provider) }))} title="解绑"><Unlink size={18} /></button>
+            <button className="icon-button" disabled={!user.identities.some((item) => item.provider !== "github" && item.provider !== identity.provider)} onClick={() => api.unlinkIdentity(identity.provider).then(() => setUser({ ...user, identities: user.identities.filter((item) => item.provider !== identity.provider) }))} title="解绑"><Unlink size={18} /></button>
           </div>)}
         </div>
         <div className="settings-section">
           <h2>绑定另一身份</h2>
           <div className="binding-actions">
             {!user.identities.some((item) => item.provider === "qitian") && <button onClick={() => linkIdentity("qitian")}><span className="qitian-symbol small">齐</span>绑定齐天簿</button>}
-            {!user.identities.some((item) => item.provider === "github") && <button onClick={() => linkIdentity("github")}><Github size={18} />绑定 GitHub</button>}
             <button onClick={() => linkIdentity("frienden")}><UserRound size={18} />{user.identities.some((item) => item.provider === "frienden") ? "同步友间手机号" : "绑定友间"}</button>
           </div>
         </div>

@@ -34,6 +34,8 @@ button { color: inherit; }
 .login-actions { display: flex; flex-direction: column; justify-content: center; padding: clamp(32px, 7vw, 96px); gap: 14px; }
 .login-actions > button { min-height: 58px; border: 1px solid var(--line); background: transparent; display: flex; align-items: center; gap: 14px; padding: 0 20px; border-radius: 7px; cursor: pointer; font-weight: 700; text-align: left; }
 .login-actions > button:hover { background: var(--surface); border-color: var(--forest); }
+.login-actions > .login-primary { background: var(--forest); border-color: var(--forest); color: var(--acid); }
+.login-actions > .login-primary:hover { filter: brightness(1.15); }
 .login-actions > p { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--muted); font-size: 13px; }
 .qitian-symbol { display: grid; place-items: center; width: 24px; height: 24px; background: var(--coral); color: #fff8f3; border-radius: 50%; font-weight: 800; font-size: 13px; }
 .qitian-symbol.small { width: 20px; height: 20px; }

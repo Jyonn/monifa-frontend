@@ -1,5 +1,5 @@
 import type { EntryDraft } from "./parse";
-import type { Identity, MfaEntry, SharedOtp, User } from "../types";
+import type { Identity, LoginProvider, MfaEntry, SharedOtp, User } from "../types";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
 const REFRESH_KEY = "monifa:refresh-token";
@@ -55,7 +55,7 @@ export async function logout() {
   clearSession();
 }
 
-export function authStartUrl(provider: Identity["provider"]) {
+export function authStartUrl(provider: LoginProvider) {
   return `${API_BASE}/auth/${provider}/start`;
 }
 
@@ -96,7 +96,7 @@ export async function unlinkIdentity(provider: Identity["provider"]) {
   return request(`/me/identities/${provider}`, { method: "DELETE" });
 }
 
-export async function startIdentityLink(provider: Identity["provider"]) {
+export async function startIdentityLink(provider: LoginProvider) {
   const result = await request<{ authorizeUrl: string }>(`/auth/${provider}/link`, {
     credentials: provider === "frienden" ? "include" : "omit",
     cache: "no-store"
